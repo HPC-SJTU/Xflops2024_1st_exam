@@ -16,45 +16,43 @@ if not (omp_proc_bind == 'true' and omp_thread_num == '128'):
     print("make sure you have run `source env.sh`")
     exit(1)
 
-
-case_list = [
-   "random.10.in",
-    "random.100000.in",
-    "random.500000.in",
-    "random.500000000.in",
-    "random.10000000000.in" 
-]
-
 case_full_score = {
     "random.10.in": 10,
     "random.100000.in": 10,
     "random.500000.in": 10,
     "random.500000000.in": 35,
-    "random.10000000000.in": 35
+    "random.1000000000.in": 35
 }
+case_list = [
+   "random.10.in",
+    "random.100000.in",
+    "random.500000.in",
+    "random.500000000.in",
+    "random.1000000000.in" 
+]
 
 std_ans = {
-    "random.10.in": 329014,
+    "random.10.in": 37,
     "random.100000.in": 4991683583,
-    "random.500000.in": 24980718446,
-    "random.500000000.in": 25000642464863,
-    "random.10000000000.in": 70504880369618
+    "random.500000.in": 124919650134,
+    "random.500000000.in": 249995621323148,
+    "random.1000000000.in": 499996598362816
 }
 
 time_limit = {
     "random.10.in": 1.001,
     "random.100000.in": 1.001,
     "random.500000.in": 1.001,
-    "random.500000000.in": 24,
-    "random.10000000000.in": 85
+    "random.500000000.in": 60,
+    "random.1000000000.in": 110
 }
 
 full_score_performace = {
     "random.10.in": 1,
     "random.100000.in": 1,
     "random.500000.in": 1,
-    "random.500000000.in": 16,
-    "random.10000000000.in": 45 
+    "random.500000000.in": 25,
+    "random.1000000000.in": 50 
 }
 # Get the path to the source_code directory
 cwd = os.path.dirname(__file__)  # Get current directory (where evaluate.py is located)
@@ -97,7 +95,11 @@ def compile_code():
         raise AssertionError(f"Compilation failed: {e}")
 
 def run_a_case(case_name, i) -> float:
-    result = subprocess.run(["numactl", "--physcpubind=all", "--interleave=0,1,2,3", "./cluster", case_name], cwd=src_path, text=True, capture_output=True, timeout=90)
+    try:
+        result = subprocess.run(["numactl", "--physcpubind=all", "--interleave=0,1,2,3", "./cluster", case_name], cwd=src_path, text=True, capture_output=True, timeout=120)
+    except subprocess.TimeoutExpired:
+        print(f"{i}/{args.t} Time Limit Exceeded in {case_name}")
+        return time_limit[case_name] + 1
     assert result.returncode == 0, "Runtime Error"
     result_strs = result.stdout.split('\n')
     runtime = float(re.search(r'^solve Time\s*([0-9\.e\-]+)$', result_strs[0]).group(1))

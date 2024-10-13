@@ -44,12 +44,13 @@ int main (int argc, char* argv[]) {
     #pragma omp parallel private(tid)
     { 
         std::mt19937 gen;
-        std::uniform_int_distribution<> dis(1, 100000);
+        std::uniform_int_distribution<> dis_w(1, std::min(1000000ll, n));
+        std::uniform_int_distribution<long long> dis_c(1, std::min((long long)1e12, n));
         nthreads = omp_get_num_threads();
         tid = omp_get_thread_num();
         gen = std::mt19937(random_seed[tid]);
         for(long long i = n*tid / nthreads; i< n*(tid+1)/ nthreads; ++i){
-            servers[i] = Server(dis(gen), dis(gen));
+            servers[i] = Server(dis_w(gen), dis_c(gen));
         }
     }
 
