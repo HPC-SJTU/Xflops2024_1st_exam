@@ -59,10 +59,10 @@ for questioni in question_dir_lst:
         shutil.copyfile(os.path.join(work_dir, questioni, file), os.path.join(submit_path, questioni, file_name))
 
 if choose!= -1:
-    subprocess.run(["tar", "-cvf", f"{tar_dir_name}.tar", f"{short_submit_path}/{tar_dir_name}"], cwd=work_dir , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["zip", "-r", f"{tar_dir_name}.zip", f"{short_submit_path}/{tar_dir_name}"], cwd=work_dir , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 else:
-    subprocess.run(["tar", "-cvf", f"{tar_dir_name}.tar", f"{short_submit_path}"], cwd=work_dir , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(["zip", "-r", f"{tar_dir_name}.zip", f"{short_submit_path}"], cwd=work_dir , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-sha256_zip = calculate_sha256(f"{work_dir}/{tar_dir_name}.tar")
+sha256_zip = calculate_sha256(f"{work_dir}/{tar_dir_name}.zip")
 
-print(f"sha256({tar_dir_name}.tar) : {sha256_zip}")
+print(f"sha256({tar_dir_name}.zip) : {sha256_zip}")
