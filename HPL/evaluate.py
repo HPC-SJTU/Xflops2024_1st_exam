@@ -1,4 +1,3 @@
-import yaml
 import json
 import subprocess
 import os, shutil
@@ -29,7 +28,7 @@ def gen_compile_sh():
 def handle_make():
     with open(f"{py_dir}/source_code/submit/Make.xflops", "r") as f:
         chars = f.read()
-    chars, count = re.subn(r'TOPdir([\s]+)=[\s]+([a-zA-Z0-9_\./\-]+)\n',r'TOPdir\1= '+f"{py_dir}/source_code/hpl-2.3\n", chars)
+    chars, count = re.subn(r'TOPdir([\s]*)=[\s]*(.*)\n',r'TOPdir\1= '+f"{py_dir}/source_code/hpl-2.3\n", chars)
     assert count == 1, "replace error"
     with open(f"{py_dir}/source_code/hpl-2.3/Make.xflops", "w") as f:
         f.write(chars)
