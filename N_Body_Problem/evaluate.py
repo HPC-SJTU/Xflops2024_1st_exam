@@ -42,6 +42,11 @@ complier_err_ele =  {
 }
 complier_err_dic = {i:complier_err_ele for i in omp_case_name}
 
+def new_avg(lst: list[float]):
+    lst.sort()
+    lst = [1/i for i in lst[:3]]
+    return len(lst) / sum(lst)
+
 def check_core(i : int):
     run_res = subprocess.run(["taskset", "-c", str(i), "echo","1"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     return run_res.returncode
@@ -155,7 +160,7 @@ def eval_1() -> tuple[float, dict[str, dict]]:
             if not args.no_warmup:
                 run_simulation(case, get_ref_path(case, 0) )
             time_list = [run_simulation(case, get_ref_path(case, i) ) for i in range(tries)]
-            avg_time = sum(time_list) / len(time_list)
+            avg_time = new_avg(time_list)
             print(f"Case {case} avg_time = {avg_time:.3f} s")
             res_dict[omp_case_name[case -1]]["performance"] = avg_time
         except AssertionError as e:
